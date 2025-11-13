@@ -1,0 +1,8 @@
+streamlit
+openai
+llama-index
+llama-index-llms-openai
+nltk
+pypdf
+pinecone
+llama-index-vector-stores-pinecone
