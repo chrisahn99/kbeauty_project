@@ -1,8 +1,9 @@
 streamlit
-openai
 llama-index
-llama-index-llms-openai
+llama-index-llms-together
+llama-index-embeddings-together
+llama-index-vector-stores-milvus
+pymilvus
 nltk
 pypdf
-pinecone
-llama-index-vector-stores-pinecone
+milvus-lite
