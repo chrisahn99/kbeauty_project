@@ -17,7 +17,7 @@ except RuntimeError:
 # Set page config with title and favicon
 st.set_page_config(
     page_title="K-Beauty AI Prototype",
-    page_icon="https://raw.githubusercontent.com/chrisahn99/re-Connect/feat/adapt_model/assets/ReConnect_avatar.jpg",
+    page_icon="https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/logo.png",
     layout="centered", initial_sidebar_state="auto", menu_items=None
 )
 st.title("K-Beauty AI Prototype")
@@ -25,7 +25,7 @@ st.info("Check out the full presentation of this app in our homepage", icon="ðŸ“
 
 
 # Sidebar
-st.sidebar.image("https://raw.githubusercontent.com/chrisahn99/re-Connect/feat/adapt_model/assets/ReConnect_logo.png", use_container_width=True)
+st.sidebar.image("https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/logo.png", use_container_width=True)
 st.sidebar.write(f"""
 Shop smarter with conversational AI.
 Our platform uses an advanced matching engine, backed by vector search technology, to deliver precise product recommendations tailored to your needs.
@@ -93,7 +93,7 @@ if prompt := st.chat_input(
 for message in st.session_state.messages:  # Write message history to UI
 
     if message["role"]=="assistant":
-        with st.chat_message(message["role"], avatar='https://raw.githubusercontent.com/chrisahn99/re-Connect/feat/adapt_model/assets/ReConnect_avatar.jpg'):
+        with st.chat_message(message["role"], avatar='https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/avatar.png'):
             st.write(message["content"])
 
     else:
@@ -103,7 +103,7 @@ for message in st.session_state.messages:  # Write message history to UI
 # If last message is not from assistant, generate a new response
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.spinner("Generating response..."):
-        with st.chat_message("assistant", avatar='https://raw.githubusercontent.com/chrisahn99/re-Connect/feat/adapt_model/assets/ReConnect_avatar.jpg'):
+        with st.chat_message("assistant", avatar='https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/avatar.png'):
             response_stream = st.session_state.chat_engine.stream_chat(prompt)
             st.write_stream(response_stream.response_gen)
             message = {"role": "assistant", "content": response_stream.response}
