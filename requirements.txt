@@ -3,6 +3,7 @@ llama-index
 llama-index-llms-together
 llama-index-embeddings-together
 llama-index-vector-stores-milvus
+grpcio==1.66.2
 pymilvus
 nltk
 pypdf
