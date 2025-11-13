@@ -5,6 +5,14 @@ from llama_index.core import VectorStoreIndex, Settings
 from llama_index.vector_stores.milvus import MilvusVectorStore
 import os
 
+import asyncio
+
+try:
+    asyncio.get_running_loop()
+except RuntimeError:
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
 
 # Set page config with title and favicon
 st.set_page_config(
