@@ -7,3 +7,4 @@ pymilvus
 nltk
 pypdf
 milvus-lite
+asyncio
