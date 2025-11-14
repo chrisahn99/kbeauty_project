@@ -51,7 +51,7 @@ def load_data():
     with st.spinner(text="K-Beauty AI assistant will be here shortly - hang tight!"):
 
         Settings.llm = TogetherLLM(
-            model="meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+            model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
             api_key=st.secrets.together_key
         )
 
