@@ -13,7 +13,7 @@ except RuntimeError:
     asyncio.set_event_loop(loop)
 
 # --- Demo product constants ---
-PRODUCT_NAME = "Re:con Jojoba Tea Tree Cream"
+PRODUCT_NAME = "Jojoba Tea Tree Cream"
 PRODUCT_IMAGE_URL = "https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/IMG_3273.jpeg"
 
 # --- Helper to display a nice product card ---
