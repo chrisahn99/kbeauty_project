@@ -7,6 +7,10 @@ import os
 
 import asyncio
 
+# --- Demo product constants ---
+PRODUCT_NAME = "Re:conJojoba Tea Tree Cream"
+PRODUCT_IMAGE_URL = "https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/IMG_3273.jpeg"
+
 try:
     asyncio.get_running_loop()
 except RuntimeError:
@@ -90,11 +94,18 @@ if prompt := st.chat_input(
 ):  # Prompt for user input and save to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-for message in st.session_state.messages:  # Write message history to UI
-
-    if message["role"]=="assistant":
-        with st.chat_message(message["role"], avatar='https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/avatar.png'):
+# Render chat history
+for message in st.session_state.messages:
+    if message["role"] == "assistant":
+        with st.chat_message(
+            message["role"],
+            avatar="https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/avatar.png"
+        ):
             st.write(message["content"])
+
+            # 👉 If the assistant message mentions the product, show the demo image
+            if PRODUCT_NAME in message["content"]:
+                st.image(PRODUCT_IMAGE_URL, caption=PRODUCT_NAME, use_container_width=False)
 
     else:
         with st.chat_message(message["role"]):
@@ -103,9 +114,22 @@ for message in st.session_state.messages:  # Write message history to UI
 # If last message is not from assistant, generate a new response
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.spinner("Generating response..."):
-        with st.chat_message("assistant", avatar='https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/avatar.png'):
+        with st.chat_message(
+            "assistant",
+            avatar="https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/avatar.png"
+        ):
             response_stream = st.session_state.chat_engine.stream_chat(prompt)
+
+            # Stream the text answer
             st.write_stream(response_stream.response_gen)
-            message = {"role": "assistant", "content": response_stream.response}
-            # Add response to message history
+
+            # Full text content after streaming
+            full_response = response_stream.response
+
+            # 👉 Immediately show the product image if the product name appears
+            if PRODUCT_NAME in full_response:
+                st.image(PRODUCT_IMAGE_URL, caption=PRODUCT_NAME, use_container_width=False)
+
+            # Save assistant message to history
+            message = {"role": "assistant", "content": full_response}
             st.session_state.messages.append(message)
