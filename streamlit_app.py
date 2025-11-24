@@ -18,7 +18,7 @@ PRODUCT_IMAGE_URL = "https://raw.githubusercontent.com/chrisahn99/kbeauty_projec
 
 # --- Helper to display a nice product card ---
 def show_product_card(button_key: str):
-    product_url = "/product/jojoba-tea-tree-cream"   # relative URL
+    slug = "jojoba-tea-tree-cream"
 
     with st.container(border=True):
         cols = st.columns([1, 2])
@@ -31,26 +31,14 @@ def show_product_card(button_key: str):
             st.caption("Hydrating cream with jojoba & tea tree — demo product.")
             st.write("Perfect for showcasing how the K-Beauty AI recommends products.")
 
-            # HTML button that navigates outside iframe (no triple quotes!)
-            button_html = (
-                f'<a href="{product_url}" target="_top" style="text-decoration: none;">'
-                '<button style="'
-                'width: 100%; '
-                'padding: 0.7rem 1.2rem; '
-                'border-radius: 8px; '
-                'border: none; '
-                'background: #111; '
-                'color: white; '
-                'font-weight: 600; '
-                'cursor: pointer;'
-                '">'
-                'Buy now'
-                '</button>'
-                '</a>'
-            )
-
-            st.markdown(button_html, unsafe_allow_html=True)
-            
+            if st.button("Buy now", use_container_width=True, key=button_key):
+                js = f"""
+                <script>
+                    window.top.location.href = window.top.origin + "/product/{slug}";
+                </script>
+                """
+                st.components.v1.html(js, height=0)
+                
 # Set page config with title and favicon
 st.set_page_config(
     page_title="K-Beauty AI Prototype",
