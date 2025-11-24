@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from llama_index.llms.together import TogetherLLM
 from llama_index.embeddings.together import TogetherEmbedding
 from llama_index.core import VectorStoreIndex, Settings
@@ -32,12 +33,13 @@ def show_product_card(button_key: str):
             st.write("Perfect for showcasing how the K-Beauty AI recommends products.")
 
             if st.button("Buy now", use_container_width=True, key=button_key):
+                # This runs inside the iframe and tells the TOP window to move
                 js = f"""
                 <script>
-                    window.top.location.href = window.top.origin + "/product/{slug}";
+                    window.top.location.href = window.top.location.origin + "/product/{slug}";
                 </script>
                 """
-                st.components.v1.html(js, height=0)
+                components.html(js, height=0)
                 
 # Set page config with title and favicon
 st.set_page_config(
