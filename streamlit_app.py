@@ -35,12 +35,16 @@ def show_product_card(button_key: str):
                 'width: 100%; '
                 'padding: 0.7rem 1.2rem; '
                 'border-radius: 8px; '
-                'border: none; '
-                'background: #111; '
-                'color: white; '
+                'border: 2px solid #ff66b3; '      /* pink outline */
+                'background: transparent; '         /* transparent default */
+                'color: #ff66b3; '                  /* pink text */
                 'font-weight: 600; '
-                'cursor: pointer;'
-                '">'
+                'cursor: pointer; '
+                'transition: all 0.25s ease; '      /* smooth animation */
+                '" '
+                'onmouseover="this.style.background=\'#ff66b3\'; this.style.color=\'white\';" '
+                'onmouseout="this.style.background=\'transparent\'; this.style.color=\'#ff66b3\';"'
+                '>'
                 'Buy now'
                 '</button>'
                 '</a>'
