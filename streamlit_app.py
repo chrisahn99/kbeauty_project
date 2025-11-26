@@ -4,14 +4,7 @@ from llama_index.llms.together import TogetherLLM
 from llama_index.embeddings.together import TogetherEmbedding
 from llama_index.core import VectorStoreIndex, Settings
 from llama_index.vector_stores.milvus import MilvusVectorStore
-import os
 import asyncio
-
-try:
-    asyncio.get_running_loop()
-except RuntimeError:
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
 
 # --- Demo product constants ---
 PRODUCT_NAME = "Jojoba Tea Tree Cream"
@@ -28,7 +21,7 @@ def show_product_card(button_key: str):
         cols = st.columns([1, 2])
 
         with cols[0]:
-            st.image(PRODUCT_IMAGE_URL, use_container_width=True)
+            st.image(PRODUCT_IMAGE_URL, width="stretch")
 
         with cols[1]:
             st.markdown(f"**{PRODUCT_NAME}**")
@@ -70,7 +63,7 @@ st.info("Check out the full presentation of this app in our homepage", icon="ðŸ“
 # Sidebar
 st.sidebar.image(
     "https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/logo.png",
-    use_container_width=True
+    width="stretch"
 )
 st.sidebar.write(
     """
@@ -95,29 +88,33 @@ if "messages" not in st.session_state.keys():
         }
     ]
 
+async def _load_data_async():
+    Settings.llm = TogetherLLM(
+        model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        api_key=st.secrets.together_key
+    )
+
+    Settings.embed_model = TogetherEmbedding(
+        model_name="togethercomputer/m2-bert-80M-32k-retrieval",
+        api_key=st.secrets.together_key
+    )
+
+    milvus_store = MilvusVectorStore(
+        uri=st.secrets.zilliz_uri,
+        collection_name="kbeauty_mvp_agent",
+        token=st.secrets.milvus_key,
+        dim=768
+    )
+
+    vector_index = VectorStoreIndex.from_vector_store(vector_store=milvus_store)
+
+    return vector_index
+
+
 @st.cache_resource(show_spinner=False)
 def load_data():
     with st.spinner(text="K-Beauty AI assistant will be here shortly - hang tight!"):
-        Settings.llm = TogetherLLM(
-            model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
-            api_key=st.secrets.together_key
-        )
-
-        Settings.embed_model = TogetherEmbedding(
-            model_name="togethercomputer/m2-bert-80M-32k-retrieval",
-            api_key=st.secrets.together_key
-        )
-
-        milvus_store = MilvusVectorStore(
-            uri=st.secrets.zilliz_uri,
-            collection_name="kbeauty_mvp_agent",
-            token=st.secrets.milvus_key,
-            dim=768
-        )
-
-        vector_index = VectorStoreIndex.from_vector_store(vector_store=milvus_store)
-
-        return vector_index
+        return asyncio.run(_load_data_async())
 
 index = load_data()
 system_prompt = st.secrets.system_prompt
