@@ -35,12 +35,12 @@ def show_product_card(button_key: str):
                 'width: 100%; '
                 'padding: 0.7rem 1.2rem; '
                 'border-radius: 8px; '
-                'border: 2px solid #ff66b3; '      /* pink outline */
-                'background: transparent; '         /* transparent default */
-                'color: #ff66b3; '                  /* pink text */
+                'border: 2px solid #ff66b3; '      
+                'background: transparent; '        
+                'color: #ff66b3; '                  
                 'font-weight: 600; '
                 'cursor: pointer; '
-                'transition: all 0.25s ease; '      /* smooth animation */
+                'transition: all 0.25s ease; '      
                 '" '
                 'onmouseover="this.style.background=\'#ff66b3\'; this.style.color=\'white\';" '
                 'onmouseout="this.style.background=\'transparent\'; this.style.color=\'#ff66b3\';"'
