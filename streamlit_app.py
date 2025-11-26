@@ -6,26 +6,57 @@ from llama_index.core import VectorStoreIndex, Settings
 from llama_index.vector_stores.milvus import MilvusVectorStore
 import asyncio
 
-# --- Demo product constants ---
-PRODUCT_NAME = "Jojoba Tea Tree Cream"
-PRODUCT_IMAGE_URL = "https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/IMG_3273.jpeg"
-
-# --- Helper to display a nice product card ---
+# --- Base URL for Lovable preview ---
 PARENT_BASE_URL = "https://preview--glow-k-beauty-boutique.lovable.app"
 
-def show_product_card(button_key: str):
-    # Full absolute URL to the product page on your Lovable preview
-    product_url = PARENT_BASE_URL + "/product/jojoba-tea-tree-cream"
+# --- Product catalog ---
+PRODUCTS = [
+    {
+        "name": "Jojoba Tea Tree Cream",
+        "image_url": "https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/IMG_3273.jpeg",
+        "slug": "jojoba-tea-tree-cream",
+    },
+    {
+        "name": "Zero Topia Cream",
+        "image_url": "https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/Screenshot%202025-10-10%20104315.png",
+        "slug": "zero-topia-cream",
+    },
+    {
+        "name": "Mooncat Real Green Tea Pore Deep Cleanser",
+        "image_url": "https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/Screenshot%202025-10-10%20104152.png",
+        "slug": "mooncat-real-green-tea-pore-deep-cleanser",
+    },
+    {
+        "name": "Quick Glow Bubble Serum",
+        "image_url": "https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/Screenshot%202025-10-10%20104629.png",
+        "slug": "quick-glow-bubble-serum",
+    },
+    {
+        "name": "Fluid Calming Pad",
+        "image_url": "https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/Screenshot%202025-10-10%20104650.png",
+        "slug": "fluid-calming-pad",
+    },
+    {
+        "name": "Jelly Stick Tint",
+        "image_url": "https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/Screenshot%202025-10-10%20104445.png",
+        "slug": "jelly-stick-tint",
+    },
+]
+
+
+# --- Helper to display a nice product card ---
+def show_product_card(product: dict, button_key: str):
+    product_url = f"{PARENT_BASE_URL}/product/{product['slug']}"
 
     with st.container(border=True):
         cols = st.columns([1, 2])
 
         with cols[0]:
-            st.image(PRODUCT_IMAGE_URL, width="stretch")
+            st.image(product["image_url"], use_container_width=True)
 
         with cols[1]:
-            st.markdown(f"**{PRODUCT_NAME}**")
-            st.caption("Hydrating cream with jojoba & tea tree â€” demo product.")
+            st.markdown(f"**{product['name']}**")
+            st.caption("Hydrating, skin-loving Korean beauty pick.")
             st.write("Perfect for showcasing how the K-Beauty AI recommends products.")
 
             # HTML button that opens the Lovable preview product page
@@ -35,12 +66,12 @@ def show_product_card(button_key: str):
                 'width: 100%; '
                 'padding: 0.7rem 1.2rem; '
                 'border-radius: 8px; '
-                'border: 2px solid #ff66b3; '      
-                'background: transparent; '        
-                'color: #ff66b3; '                  
+                'border: 2px solid #ff66b3; '
+                'background: transparent; '
+                'color: #ff66b3; '
                 'font-weight: 600; '
                 'cursor: pointer; '
-                'transition: all 0.25s ease; '      
+                'transition: all 0.25s ease; '
                 '" '
                 'onmouseover="this.style.background=\'#ff66b3\'; this.style.color=\'white\';" '
                 'onmouseout="this.style.background=\'transparent\'; this.style.color=\'#ff66b3\';"'
@@ -51,7 +82,8 @@ def show_product_card(button_key: str):
             )
 
             st.markdown(button_html, unsafe_allow_html=True)
-                
+
+
 # Set page config with title and favicon
 st.set_page_config(
     page_title="K-Beauty AI Prototype",
@@ -67,7 +99,7 @@ st.info("Check out the full presentation of this app in our homepage", icon="ðŸ“
 # Sidebar
 st.sidebar.image(
     "https://raw.githubusercontent.com/chrisahn99/kbeauty_project/refs/heads/main/assets/logo.png",
-    width="stretch"
+    use_container_width=True,
 )
 st.sidebar.write(
     """
@@ -91,6 +123,7 @@ if "messages" not in st.session_state.keys():
             "content": "Hello, how can I help you today?",
         }
     ]
+
 
 async def _load_data_async():
     Settings.llm = TogetherLLM(
@@ -120,6 +153,7 @@ def load_data():
     with st.spinner(text="K-Beauty AI assistant will be here shortly - hang tight!"):
         return asyncio.run(_load_data_async())
 
+
 index = load_data()
 system_prompt = st.secrets.system_prompt
 
@@ -146,9 +180,10 @@ for i, message in enumerate(st.session_state.messages):
         ):
             st.write(message["content"])
 
-            # If the assistant message mentions the product, show the product card
-            if PRODUCT_NAME in message["content"]:
-                show_product_card(button_key=f"history_{i}")
+            # Show cards for any products mentioned in this message
+            for product in PRODUCTS:
+                if product["name"] in message["content"]:
+                    show_product_card(product, button_key=f"history_{i}_{product['slug']}")
 
     else:
         with st.chat_message(message["role"]):
@@ -169,10 +204,11 @@ if st.session_state.messages[-1]["role"] != "assistant":
             # Full text content after streaming
             full_response = response_stream.response
 
-            # Show product card if product name appears
-            if PRODUCT_NAME in full_response:
-                show_product_card(button_key=f"live_{len(st.session_state.messages)}")
+            # Show product cards if their names appear in the response
+            for product in PRODUCTS:
+                if product["name"] in str(full_response):
+                    show_product_card(product, button_key=f"live_{len(st.session_state.messages)}_{product['slug']}")
 
             # Save assistant message to history
-            message = {"role": "assistant", "content": full_response}
+            message = {"role": "assistant", "content": str(full_response)}
             st.session_state.messages.append(message)
